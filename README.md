@@ -50,7 +50,7 @@ Roborock QRevo Pro
 ```
 
 ### Installation
-The installation is completely manual.  Follow these [instructions](instructions.me).
+The installation is completely manual.  Follow these [instructions](instructions.md).
 
 ### How It Works
 This section gives an overview of how the vacuum control panel works.  It's not necessary to read this section to use and use it, but it can make is easier by helping you understand what all the parts are doing.
