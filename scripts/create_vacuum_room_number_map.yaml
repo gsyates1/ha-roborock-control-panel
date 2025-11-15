@@ -1,0 +1,41 @@
+sequence:
+  - alias: Execute event to set the dictionary of rooms to roborock room numbers
+    event: set_variable
+    event_data:
+      key: vacuum_roborock_room_number_map
+      value: |
+        {{ { "Dining Room": 16,
+          "Entry & Library": 17,
+          "Great Room": 20,
+          "Kitchen": 22,
+          "Laundry Room": 21,
+          "Master Bedroom & Bath": 18,
+          "Nook & Bar Area": 19,
+          "Craft Room": 16,
+          "Bridge & Hall": 20,
+          "Guest Room": 18,
+          "Computer Room": 17,
+          "Bonus Room": 19
+        } }}
+      set_timestamp: false
+  - alias: Execute event to set the dictionary of rooms to our room numbers
+    event: set_variable
+    event_data:
+      key: vacuum_room_number_map
+      value: |
+        {{ { "Dining Room": 1,
+          "Entry & Library": 2,
+          "Great Room": 3,
+          "Kitchen": 4,
+          "Laundry Room": 5,
+          "Master Bedroom & Bath": 6,
+          "Nook & Bar Area": 7,
+          "Craft Room": 8,
+          "Bridge & Hall": 9,
+          "Guest Room": 10,
+          "Computer Room": 11,
+          "Bonus Room": 12
+        } }}
+      set_timestamp: false
+alias: Create Vacuum Room Number Map
+description: ""

@@ -1,0 +1,13 @@
+alias: Startup
+description: Actions to perform when home assistant starts.
+triggers:
+  - trigger: homeassistant
+    event: start
+conditions: []
+actions:
+  - action: timer.start
+    metadata: {}
+    data: {}
+    target:
+      entity_id: timer.vacuum_run_check
+mode: single

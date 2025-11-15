@@ -1,0 +1,36 @@
+vacuum_0_announced_today:
+  name: Vacuum 0-Announced Today
+  icon: mdi:check
+vacuum_0_ran_today:
+  name: Vacuum 0-Ran Today
+  icon: mdi:check
+vacuum_0_day_enabled:
+  name: Vacuum 0-Day Enabled
+  icon: mdi:toggle-switch-off-outline
+vacuum_1_sunday_day_enabled:
+  name: Vacuum 1-Sunday Enabled
+  icon: mdi:toggle-switch-off-outline
+vacuum_2_monday_day_enabled:
+  name: Vacuum 2-Monday Enabled
+  icon: mdi:toggle-switch-off-outline
+vacuum_3_tuesday_day_enabled:
+  name: Vacuum 3-Tuesday Enabled
+  icon: mdi:toggle-switch-off-outline
+vacuum_4_wednesday_day_enabled:
+  name: Vacuum 4-Wednesday Enabled
+  icon: mdi:toggle-switch-off-outline
+vacuum_5_thursday_day_enabled:
+  name: Vacuum 5-Thursday Enabled
+  icon: mdi:toggle-switch-off-outline
+vacuum_6_friday_day_enabled:
+  name: Vacuum 6-Friday Enabled
+  icon: mdi:toggle-switch-off-outline
+vacuum_7_Saturday_day_enabled:
+  name: Vacuum 7-Saturday Enabled
+  icon: mdi:toggle-switch-off-outline
+vacuum_announced_today:
+  name: Vacuum Announced Today
+  icon: mdi:check
+vacuum_ran_today:
+  name: Vacuum Ran Today
+  icon: mdi:check

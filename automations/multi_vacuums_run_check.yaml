@@ -1,0 +1,16 @@
+  - alias: Script 'Vacuum Set Variables' on Second Floor Vaccum
+    action: script.vacuum_set_variables_for_today
+    metadata: {}
+    data:
+      vacuum_entity: vacuum.roborock_qrevo_pro_2
+      manual_mode: 'false'
+  - action: script.vacuum_run_announce
+    metadata: {}
+    data:
+      vacuum_entity: vacuum.roborock_qrevo_pro_2
+    alias: Script 'Vacuum Run Announce' on Second Floor Vaccum
+  - action: script.vacuum_run_check_2
+    metadata: {}
+    data:
+      vacuum_entity: vacuum.roborock_qrevo_pro_2
+    alias: Script 'Vacuum Run Check' on Second Floor Vaccum

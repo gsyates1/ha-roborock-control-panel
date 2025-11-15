@@ -1,0 +1,32 @@
+vacuum_0_time:
+  name: Vacuum 0-Time
+  has_date: false
+  has_time: true
+vacuum_1_sunday_time:
+  name: Vacuum 1-Sunday Time
+  has_date: false
+  has_time: true
+vacuum_2_monday_time:
+  name: Vacuum 2-Monday Time
+  has_date: false
+  has_time: true
+vacuum_3_tuesday_time:
+  name: Vacuum 3-Tuesday Time
+  has_date: false
+  has_time: true
+vacuum_4_wednesday_time:
+  name: Vacuum 4-Wednesday Time
+  has_date: false
+  has_time: true
+vacuum_5_thursday_time:
+  name: Vacuum 5-Thursday Time
+  has_date: false
+  has_time: true
+vacuum_6_friday_time:
+  name: Vacuum 6-Friday Time
+  has_date: false
+  has_time: true
+vacuum_7_saturday_time:
+  name: Vacuum 7-Saturday Time
+  has_date: false
+  has_time: true

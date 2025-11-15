@@ -1,0 +1,1566 @@
+  - type: sections
+    max_columns: 4
+    title: Vacuum
+    path: vacuum
+    icon: ''
+    subview: true
+    sections:
+      - type: grid
+        cards:
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: template
+                icon: >-
+                  {% if states('sensor.roborock_qrevo_pro_battery') | int <= 10
+                  %}
+
+                  mdi:battery-10
+
+                  {% elif states('sensor.roborock_qrevo_pro_battery') | int <=
+                  30 %}
+
+                  mdi:battery-30-bluetooth
+
+                  {% elif states('sensor.roborock_qrevo_pro_battery') | int <=
+                  50 %}
+
+                  mdi:battery-50-bluetooth
+
+                  {% elif states('sensor.roborock_qrevo_pro_battery') | int <=
+                  80 %}
+
+                  mdi:battery-80-bluetooth
+
+                  {% else %}
+
+                  mdi:battery
+
+                  {% endif %}
+                icon_color: >-
+                  {% if states('sensor.roborock_qrevo_pro_battery') | int <= 10
+                  %}
+
+                  red
+
+                  {% elif states('sensor.roborock_qrevo_pro_battery') | int <=
+                  30 %}
+
+                  orange
+
+                  {% elif states('sensor.roborock_qrevo_pro_battery') | int <=
+                  50 %}
+
+                  yellow
+
+                  {% elif states('sensor.roborock_qrevo_pro_battery') | int <=
+                  80 %}
+
+                  blue
+
+                  {% else %}
+
+                  green
+
+                  {% endif %}
+                picture: ''
+                content: '{{ states(''sensor.roborock_qrevo_pro_battery'') }}%'
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+              - type: template
+                entity: sensor.roborock_qrevo_pro_status
+                icon: mdi:robot-vacuum
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                icon_color: >-
+                  {% if states('sensor.roborock_qrevo_pro_dock_error') != 'ok'
+                  or
+
+                  states('sensor.roborock_qrevo_pro_vacuum_error') != 'none' %}
+                    red
+                  {% else %}
+                    {% if states('vacuum.roborock_qrevo_pro') != 'docked' -%}
+                      {% if states('vacuum.roborock_qrevo_pro') == 'idle' -%}
+                        red
+                      {% else %}
+                        orange
+                      {% endif %}
+                    {% else %}
+                      {% if states('sensor.roborock_qrevo_pro_status') != 'charging' %}
+                        orange
+                      {% else %}
+                        blue
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                content: >-
+                  {% set state = states('vacuum.roborock_qrevo_pro') |
+                  replace("_", " ") | capitalize %}
+
+                  {% set status = states('sensor.roborock_qrevo_pro_status') |
+                  replace("_", " ") | capitalize %}
+
+                  {{ state }} - {{ status }}
+              - type: template
+                entity: binary_sensor.roborock_qrevo_pro_water_shortage
+                icon_color: >-
+                  {% if
+                  is_state('binary_sensor.roborock_qrevo_pro_water_shortage',
+                  'on') %}
+
+                  red
+
+                  {% else %}
+
+                  blue
+
+                  {% endif %}
+                icon: >-
+                  {% if
+                  is_state('binary_sensor.roborock_qrevo_pro_water_shortage',
+                  'on') %}
+
+                  mdi:water-off
+
+                  {% else %}
+
+                  mdi:water
+
+                  {% endif %}
+                content: >-
+                  {% if
+                  is_state('binary_sensor.roborock_qrevo_pro_water_shortage',
+                  'on') %}
+
+                  Add Water
+
+                  {% else %}
+
+                  Ok
+
+                  {% endif %}
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+              - type: template
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                entity: binary_sensor.roborock_qrevo_pro_mop_attached
+                icon: mdi:circle-slice-8
+                icon_color: >-
+                  {% if
+                  is_state('binary_sensor.roborock_qrevo_pro_mop_attached',
+                  'on') %}
+
+                  green
+
+                  {% else %}
+
+                  grey
+
+                  {% endif %}
+                content: >-
+                  {% if
+                  is_state('binary_sensor.roborock_qrevo_pro_mop_attached',
+                  'on') %}
+
+                  Mop Attached
+
+                  {% else %}
+
+                  Mop Missing
+
+                  {% endif %}
+              - type: template
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                icon: mdi:air-filter
+                icon_color: >-
+                  {% if is_state('binary_sensor.roborock_qrevo_pro_mop_drying',
+                  'on') %}
+
+                  orange
+
+                  {% else %}
+
+                  grey
+
+                  {% endif %}
+                content: >-
+                  {% if is_state('binary_sensor.roborock_qrevo_pro_mop_drying',
+                  'on') %}
+
+                  {% set delta =
+                  states('sensor.roborock_qrevo_pro_mop_drying_remaining_time')
+                  | int %}
+
+                  {% set hours = ((delta % 86400) / 3600) | int -%}
+
+                  {% set minutes = ((delta % 3600) / 60) | int -%}
+
+                  {% set seconds = (delta - (minutes * 60) - (hours * 3600)) |
+                  int -%}
+
+                  Drying - {{ hours }}:{{ '%02d' % minutes }}:{{ '%02d' %
+                  seconds }}
+
+                  {% else %}
+
+                  Off
+
+                  {% endif %}
+              - type: template
+                entity: select.roborock_qrevo_pro_mop_mode
+                icon: mdi:map-marker-path
+                content: >-
+                  {{ states('select.roborock_qrevo_pro_mop_mode') | capitalize
+                  }}
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+              - type: template
+                entity: select.roborock_qrevo_pro_mop_intensity
+                icon: mdi:arrow-collapse-down
+                content: >-
+                  {{ states('select.roborock_qrevo_pro_mop_intensity') |
+                  capitalize }}
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+              - type: template
+                icon: mdi:fan
+                icon_color: white
+                content: >-
+                  {{ state_attr('vacuum.roborock_qrevo_pro','fan_speed') |
+                  capitalize }}
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+            grid_options:
+              columns: 25
+              rows: auto
+          - type: markdown
+            content: >
+              Last Run:  {{
+              ((states('sensor.roborock_qrevo_pro_last_clean_begin') |
+              as_timestamp  |
+                  as_datetime).strftime('%Y-%m-%dT%H:%M-00:00') | as_timestamp |
+                  timestamp_local | as_datetime).strftime('%a, %m/%d %-I:%M %p') }}
+                     For:  {% set delta = states('sensor.roborock_qrevo_pro_last_clean_end') | as_timestamp - states('sensor.roborock_qrevo_pro_last_clean_begin') | as_timestamp %}
+              {%- set minutes = ((delta % 3600) / 60) | int -%} {% set hours =
+              ((delta % 86400) / 3600) | int -%} {% set seconds = (delta -
+              (minutes * 60) - (hours * 3600)) | int -%} {%- if delta < 60 -%}
+                < 1 min
+              {%- else -%}
+                {%- if hours > 0 -%}
+                  {%- if hours == 1 -%}
+                    1 hr
+                  {%- else -%}
+                    {{ hours }} hrs
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if minutes > 0 -%}
+                  {%- if hours > 0 -%}
+                    {{ ', ' }}
+                  {%- endif -%}
+                  {%- if minutes == 1 -%}
+                    1 min
+                  {%- else -%}
+                    {{ minutes }} mins
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if seconds > 0 -%}
+                  {%- if hours > 0 or minutes > 0 -%}
+                    {{ ', ' }}
+                  {%- endif -%}
+                  {%- if seconds == 1 -%}
+                    1 sec
+                  {%- else -%}
+                    {{ seconds }} secs
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endif -%}
+            grid_options:
+              columns: 11
+              rows: auto
+            card_mod:
+              style: |
+                :host ha-card
+                {
+                  border-width: 0px !important;
+                  background:none;
+                }
+        column_span: 3
+      - type: grid
+        cards:
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.roborock_qrevo_pro_dock_error
+                state_not: ok
+            card:
+              type: custom:mushroom-chips-card
+              chips:
+                - type: template
+                  tap_action:
+                    action: none
+                  hold_action:
+                    action: none
+                  double_tap_action:
+                    action: none
+                  entity: sensor.roborock_qrevo_pro_dock_error
+                  icon: mdi:garage-open
+                  icon_color: red
+                  content: '{{ states(''sensor.roborock_qrevo_pro_dock_error'') }}'
+                  card_mod:
+                    style: >
+                      .content {
+
+                      {% if states('sensor.roborock_qrevo_pro_dock_error') !=
+                      'ok' %}
+                        animation: blink 2s linear infinite;
+                        {% endif %}
+                      }
+
+                      @keyframes blink {
+                        0% {opacity: 1}
+                        50% {opacity: 0.2}
+                        100% {opacity: 1}
+                      }
+            grid_options:
+              columns: 3
+              rows: auto
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.roborock_qrevo_pro_vacuum_error
+                state_not: none
+            card:
+              type: custom:mushroom-chips-card
+              chips:
+                - type: template
+                  tap_action:
+                    action: none
+                  hold_action:
+                    action: none
+                  double_tap_action:
+                    action: none
+                  entity: sensor.roborock_qrevo_pro_vacuum_error
+                  icon: mdi:robot-vacuum
+                  icon_color: red
+                  content: '{{ states(''sensor.roborock_qrevo_pro_vacuum_error'') }}'
+                  card_mod:
+                    style: >
+                      .content {
+
+                      {% if states('sensor.roborock_qrevo_pro_vacuum_error') !=
+                      'none' %}
+                        animation: blink 2s linear infinite;
+                        {% endif %}
+                      }
+
+                      @keyframes blink {
+                        0% {opacity: 1}
+                        50% {opacity: 0.2}
+                        100% {opacity: 1}
+                      }
+            grid_options:
+              columns: 3
+              rows: auto
+      - type: grid
+        cards:
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: vacuum.roborock_qrevo_pro
+                state_not: docked
+            card:
+              type: custom:mushroom-template-card
+              primary: >-
+                Progress {{
+                states('sensor.roborock_qrevo_pro_cleaning_progress') }}%
+              secondary: ''
+              icon: ''
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+              double_tap_action:
+                action: none
+            grid_options:
+              columns: 4
+              rows: auto
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: vacuum.roborock_qrevo_pro
+                state_not: docked
+            card:
+              type: custom:mushroom-chips-card
+              chips:
+                - type: template
+                  tap_action:
+                    action: perform-action
+                    perform_action: vacuum.stop
+                    target:
+                      entity_id: vacuum.roborock_qrevo_pro
+                  hold_action:
+                    action: none
+                  double_tap_action:
+                    action: none
+                  icon: mdi:stop
+                  icon_color: ''
+                - type: template
+                  hold_action:
+                    action: none
+                  double_tap_action:
+                    action: none
+                  icon: mdi:pause
+                  tap_action:
+                    action: perform-action
+                    perform_action: vacuum.pause
+                    target:
+                      entity_id: vacuum.roborock_qrevo_pro
+                - type: template
+                  tap_action:
+                    action: perform-action
+                    perform_action: vacuum.start
+                    target:
+                      entity_id: vacuum.roborock_qrevo_pro
+                  hold_action:
+                    action: none
+                  double_tap_action:
+                    action: none
+                  icon: mdi:play
+                  icon_color: ''
+                - type: template
+                  tap_action:
+                    action: perform-action
+                    perform_action: vacuum.return_to_base
+                    target:
+                      entity_id: vacuum.roborock_qrevo_pro
+                  hold_action:
+                    action: none
+                  double_tap_action:
+                    action: none
+                  icon: mdi:home-import-outline
+                  icon_color: ''
+              card_mod:
+                style:
+                  mushroom-template-chip:nth-child(1)$: |
+                    ha-state-icon {
+                      --chip-icon-size: 25px;
+                    }
+                  mushroom-template-chip:nth-child(2)$: |
+                    ha-state-icon {
+                      --chip-icon-size: 25px;
+                    }
+                  mushroom-template-chip:nth-child(3)$: |
+                    ha-state-icon {
+                      --chip-icon-size: 25px;
+                    }
+            grid_options:
+              columns: 7
+              rows: auto
+        column_span: 4
+      - type: grid
+        cards:
+          - show_state: false
+            show_name: false
+            camera_view: auto
+            type: picture-entity
+            entity: image.roborock_qrevo_pro_first_floor
+            tap_action:
+              action: none
+            hold_action:
+              action: none
+            fit_mode: fill
+            grid_options:
+              columns: 9
+              rows: 7
+            card_mod:
+              style: |
+                ha-card {
+                  transform: translate(60%, 5%) rotate(-90deg) scale(155%, 155%) !important;
+                  transition: none !important;
+                }
+        column_span: 2
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: Schedule
+            grid_options:
+              columns: 22
+              rows: auto
+            subtitle: ''
+          - type: custom:mushroom-title-card
+            title: ''
+            grid_options:
+              columns: 23
+              rows: auto
+            subtitle: Enable　　　　Time　　　　　　Announce　　　　Room　　　　　　　　　　　　　Action
+          - type: custom:mushroom-template-card
+            primary: Sun
+            secondary: ''
+            icon: |-
+              {% if is_state('input_boolean.vacuum_1_sunday_enabled', 'on') %}
+              mdi:toggle-switch-outline
+              {% else %}
+              mdi:toggle-switch-off-outline
+              {% endif %}
+            entity: input_boolean.vacuum_1_sunday_enabled
+            icon_color: |-
+              {% if is_state('input_boolean.vacuum_1_sunday_enabled', 'on') %}
+              green
+              {% else %}
+              grey
+              {% endif %}
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: input_datetime.vacuum_1_sunday_time
+            name: Time
+            icon_type: none
+            layout: horizontal
+            primary_info: state
+            secondary_info: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-template-card
+            entity: input_number.vacuum_1_sunday_announce_offset
+            primary: '-{{ states(''input_number.vacuum_1_sunday_announce_offset'') }} min'
+            grid_options:
+              columns: 4
+              rows: 1
+            icon: ''
+            tap_action:
+              action: more-info
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            secondary: ''
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_1_sunday_room
+            name: Room
+            primary_info: none
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            icon_type: none
+            fill_container: false
+            layout: horizontal
+            grid_options:
+              columns: 8
+              rows: 1
+            card_mod:
+              style: |
+                .actions {
+                  flex-grow: 3 ;
+                }
+          - type: custom:mushroom-template-card
+            primary: '{{ states(''input_text.vacuum_1_sunday_clean_mode'') }}'
+            secondary: ''
+            icon: ''
+            grid_options:
+              columns: 4
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_cycle_clean_mode
+              target: {}
+              data:
+                clean_mode_entity: input_text.vacuum_1_sunday_clean_mode
+          - type: custom:mushroom-template-card
+            primary: Mon
+            secondary: ''
+            icon: |-
+              {% if is_state('input_boolean.vacuum_2_monday_enabled', 'on') %}
+              mdi:toggle-switch-outline
+              {% else %}
+              mdi:toggle-switch-off-outline
+              {% endif %}
+            entity: input_boolean.vacuum_2_monday_enabled
+            icon_color: |-
+              {% if is_state('input_boolean.vacuum_2_monday_enabled', 'on') %}
+              green
+              {% else %}
+              grey
+              {% endif %}
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: input_datetime.vacuum_2_monday_time
+            name: Time
+            icon_type: none
+            layout: horizontal
+            primary_info: state
+            secondary_info: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-template-card
+            entity: input_number.vacuum_2_monday_announce_offset
+            primary: '-{{ states(''input_number.vacuum_2_monday_announce_offset'') }} min'
+            grid_options:
+              columns: 4
+              rows: 1
+            icon: ''
+            tap_action:
+              action: more-info
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            secondary: ''
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_2_monday_room
+            name: Room
+            primary_info: none
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            icon_type: none
+            fill_container: false
+            layout: horizontal
+            grid_options:
+              columns: 8
+              rows: 1
+            card_mod:
+              style: |
+                .actions {
+                  flex-grow: 3;
+                }
+          - type: custom:mushroom-template-card
+            primary: '{{ states(''input_text.vacuum_2_monday_clean_mode'') }}'
+            secondary: ''
+            icon: ''
+            grid_options:
+              columns: 4
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_cycle_clean_mode
+              target: {}
+              data:
+                clean_mode_entity: input_text.vacuum_2_monday_clean_mode
+          - type: custom:mushroom-template-card
+            primary: Tue
+            secondary: ''
+            icon: |-
+              {% if is_state('input_boolean.vacuum_3_tuesday_enabled', 'on') %}
+              mdi:toggle-switch-outline
+              {% else %}
+              mdi:toggle-switch-off-outline
+              {% endif %}
+            entity: input_boolean.vacuum_3_tuesday_enabled
+            icon_color: |-
+              {% if is_state('input_boolean.vacuum_3_tuesday_enabled', 'on') %}
+              green
+              {% else %}
+              grey
+              {% endif %}
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: input_datetime.vacuum_3_tuesday_time
+            name: Time
+            icon_type: none
+            layout: horizontal
+            primary_info: state
+            secondary_info: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-template-card
+            entity: input_number.vacuum_3_tuesday_announce_offset
+            primary: '-{{ states(''input_number.vacuum_3_tuesday_announce_offset'') }} min'
+            grid_options:
+              columns: 4
+              rows: 1
+            icon: ''
+            tap_action:
+              action: more-info
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            secondary: ''
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_3_tuesday_room
+            name: Room
+            primary_info: none
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            icon_type: none
+            fill_container: false
+            layout: horizontal
+            grid_options:
+              columns: 8
+              rows: 1
+            card_mod:
+              style: |
+                .actions {
+                  flex-grow: 3;
+                }
+          - type: custom:mushroom-template-card
+            primary: '{{ states(''input_text.vacuum_3_tuesday_clean_mode'') }}'
+            secondary: ''
+            icon: ''
+            grid_options:
+              columns: 4
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_cycle_clean_mode
+              target: {}
+              data:
+                clean_mode_entity: input_text.vacuum_3_tuesday_clean_mode
+          - type: custom:mushroom-template-card
+            primary: Wed
+            secondary: ''
+            icon: >-
+              {% if is_state('input_boolean.vacuum_4_wednesday_enabled', 'on')
+              %}
+
+              mdi:toggle-switch-outline
+
+              {% else %}
+
+              mdi:toggle-switch-off-outline
+
+              {% endif %}
+            entity: input_boolean.vacuum_4_wednesday_enabled
+            icon_color: >-
+              {% if is_state('input_boolean.vacuum_4_wednesday_enabled', 'on')
+              %}
+
+              green
+
+              {% else %}
+
+              grey
+
+              {% endif %}
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: input_datetime.vacuum_4_wednesday_time
+            name: Time
+            icon_type: none
+            layout: horizontal
+            primary_info: state
+            secondary_info: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-template-card
+            entity: input_number.vacuum_4_wednesday_announce_offset
+            primary: >-
+              -{{ states('input_number.vacuum_4_wednesday_announce_offset') }}
+              min
+            grid_options:
+              columns: 4
+              rows: 1
+            icon: ''
+            tap_action:
+              action: more-info
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            secondary: ''
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_4_wednesday_room
+            name: Room
+            primary_info: none
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            icon_type: none
+            fill_container: false
+            layout: horizontal
+            grid_options:
+              columns: 8
+              rows: 1
+            card_mod:
+              style: |
+                .actions {
+                  flex-grow: 3;
+                }
+          - type: custom:mushroom-template-card
+            primary: '{{ states(''input_text.vacuum_4_wednesday_clean_mode'') }}'
+            secondary: ''
+            icon: ''
+            grid_options:
+              columns: 4
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_cycle_clean_mode
+              target: {}
+              data:
+                clean_mode_entity: input_text.vacuum_4_wednesday_clean_mode
+          - type: custom:mushroom-template-card
+            primary: Thu
+            secondary: ''
+            icon: |-
+              {% if is_state('input_boolean.vacuum_5_thursday_enabled', 'on') %}
+              mdi:toggle-switch-outline
+              {% else %}
+              mdi:toggle-switch-off-outline
+              {% endif %}
+            entity: input_boolean.vacuum_5_thursday_enabled
+            icon_color: |-
+              {% if is_state('input_boolean.vacuum_5_thursday_enabled', 'on') %}
+              green
+              {% else %}
+              grey
+              {% endif %}
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: input_datetime.vacuum_5_thursday_time
+            name: Time
+            icon_type: none
+            layout: horizontal
+            primary_info: state
+            secondary_info: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-template-card
+            entity: input_number.vacuum_5_thursday_announce_offset
+            primary: >-
+              -{{ states('input_number.vacuum_5_thursday_announce_offset') }}
+              min
+            grid_options:
+              columns: 4
+              rows: 1
+            icon: ''
+            tap_action:
+              action: more-info
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            secondary: ''
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_5_thursday_room
+            name: Room
+            primary_info: none
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            icon_type: none
+            fill_container: false
+            layout: horizontal
+            grid_options:
+              columns: 8
+              rows: 1
+            card_mod:
+              style: |
+                .actions {
+                  flex-grow: 3;
+                }
+          - type: custom:mushroom-template-card
+            primary: '{{ states(''input_text.vacuum_5_thursday_clean_mode'') }}'
+            secondary: ''
+            icon: ''
+            grid_options:
+              columns: 4
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_cycle_clean_mode
+              target: {}
+              data:
+                clean_mode_entity: input_text.vacuum_5_thursday_clean_mode
+          - type: custom:mushroom-template-card
+            primary: Fri
+            secondary: ''
+            icon: |-
+              {% if is_state('input_boolean.vacuum_6_friday_enabled', 'on') %}
+              mdi:toggle-switch-outline
+              {% else %}
+              mdi:toggle-switch-off-outline
+              {% endif %}
+            entity: input_boolean.vacuum_6_friday_enabled
+            icon_color: |-
+              {% if is_state('input_boolean.vacuum_6_friday_enabled', 'on') %}
+              green
+              {% else %}
+              grey
+              {% endif %}
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: input_datetime.vacuum_6_friday_time
+            name: Time
+            icon_type: none
+            layout: horizontal
+            primary_info: state
+            secondary_info: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-template-card
+            entity: input_number.vacuum_6_friday_announce_offset
+            primary: '-{{ states(''input_number.vacuum_6_friday_announce_offset'') }} min'
+            grid_options:
+              columns: 4
+              rows: 1
+            icon: ''
+            tap_action:
+              action: more-info
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            secondary: ''
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_6_friday_room
+            name: Room
+            primary_info: none
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            icon_type: none
+            fill_container: false
+            layout: horizontal
+            grid_options:
+              columns: 8
+              rows: 1
+            card_mod:
+              style: |
+                .actions {
+                  flex-grow: 3;
+                }
+          - type: custom:mushroom-template-card
+            primary: '{{ states(''input_text.vacuum_6_friday_clean_mode'') }}'
+            secondary: ''
+            icon: ''
+            grid_options:
+              columns: 4
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_cycle_clean_mode
+              target: {}
+              data:
+                clean_mode_entity: input_text.vacuum_6_friday_clean_mode
+          - type: custom:mushroom-template-card
+            primary: Sat
+            secondary: ''
+            icon: |-
+              {% if is_state('input_boolean.vacuum_7_saturday_enabled', 'on') %}
+              mdi:toggle-switch-outline
+              {% else %}
+              mdi:toggle-switch-off-outline
+              {% endif %}
+            entity: input_boolean.vacuum_7_saturday_enabled
+            icon_color: |-
+              {% if is_state('input_boolean.vacuum_7_saturday_enabled', 'on') %}
+              green
+              {% else %}
+              grey
+              {% endif %}
+            tap_action:
+              action: toggle
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-entity-card
+            entity: input_datetime.vacuum_7_saturday_time
+            name: Time
+            icon_type: none
+            layout: horizontal
+            primary_info: state
+            secondary_info: none
+            grid_options:
+              columns: 4
+              rows: 1
+          - type: custom:mushroom-template-card
+            entity: input_number.vacuum_7_saturday_announce_offset
+            primary: >-
+              -{{ states('input_number.vacuum_7_saturday_announce_offset') }}
+              min
+            grid_options:
+              columns: 4
+              rows: 1
+            icon: ''
+            tap_action:
+              action: more-info
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            secondary: ''
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_7_saturday_room
+            name: Room
+            primary_info: none
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            icon_type: none
+            fill_container: false
+            layout: horizontal
+            grid_options:
+              columns: 8
+              rows: 1
+            card_mod:
+              style: |
+                .actions {
+                  flex-grow: 3;
+                }
+          - type: custom:mushroom-template-card
+            primary: '{{ states(''input_text.vacuum_7_saturday_clean_mode'') }}'
+            secondary: ''
+            icon: ''
+            grid_options:
+              columns: 4
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_cycle_clean_mode
+              target: {}
+              data:
+                clean_mode_entity: input_text.vacuum_7_saturday_clean_mode
+          - type: custom:mushroom-title-card
+            title: ''
+            subtitle: Manual Clean
+            grid_options:
+              columns: 22
+              rows: auto
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_manual_clean_room
+            name: Room
+            primary_info: name
+            secondary_info: none
+            icon_type: none
+            layout: horizontal
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            card_mod:
+              style: |
+                .actions {
+                  flex-grow: 3 ;
+                }
+          - type: custom:mushroom-template-card
+            primary: '{{ states(''input_text.vacuum_manual_clean_room_clean_mode'') }}'
+            secondary: ''
+            icon: ''
+            grid_options:
+              columns: 4
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_cycle_clean_mode
+              target: {}
+              data:
+                clean_mode_entity: input_text.vacuum_manual_clean_room_clean_mode
+            entity: input_text.vacuum_manual_clean_room_clean_mode
+          - type: custom:mushroom-template-card
+            primary: Clean Now
+            secondary: ''
+            icon: mdi:broom
+            grid_options:
+              columns: 5
+              rows: 1
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+            tap_action:
+              action: perform-action
+              perform_action: script.vacuum_clean_room_manual
+              target: {}
+              data:
+                vacuum_entity: vacuum.roborock_qrevo_pro
+        column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: Maintenance (click and hold to reset)
+            heading_style: subtitle
+          - type: custom:mushroom-template-card
+            primary: Replace Air Filter
+            secondary: >-
+              {% set delta =
+              states('sensor.roborock_qrevo_pro_filter_time_left') | int %}
+
+              {% set hours = (delta | float / 3600) | round(0) | int -%}
+
+              in {% if delta < 1 -%}
+                < 1 hr
+              {%- else -%}
+                {{ hours }} hrs
+              {%- endif %} of run time
+            icon: mdi:air-filter
+            entity: sensor.roborock_qrevo_pro_filter_time_left
+            icon_color: >-
+              {% if states('sensor.roborock_qrevo_pro_filter_time_left') | int
+              <= 0 %}
+
+              red
+
+              {% elif states('sensor.roborock_qrevo_pro_filter_time_left') | int
+              <= 3600 %}
+
+              orange
+
+              {% elif states('sensor.roborock_qrevo_pro_filter_time_left') | int
+              <= 21600 %}
+
+              yellow
+
+              {% else %}
+
+              green
+
+              {% endif %}
+            grid_options:
+              columns: 12
+              rows: 1
+            tap_action:
+              action: none
+            hold_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.roborock_qrevo_pro_reset_air_filter_consumable
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-template-card
+            primary: Replace Main Brush
+            secondary: >-
+              {% set delta =
+              states('sensor.roborock_qrevo_pro_main_brush_time_left') | int %}
+
+              {% set hours = (delta | float / 3600) | round(0) | int -%}
+
+              in {% if delta < 1 -%}
+                < 1 hr
+              {%- else -%}
+                {{ hours }} hrs
+              {%- endif %} of run time
+            icon: mdi:cog-outline
+            entity: sensor.roborock_qrevo_pro_main_brush_time_left
+            icon_color: >-
+              {% if states('sensor.roborock_qrevo_pro_main_brush_time_left') |
+              int <= 0 %}
+
+              red
+
+              {% elif states('sensor.roborock_qrevo_pro_main_brush_time_left') |
+              int <= 3600 %}
+
+              orange
+
+              {% elif states('sensor.roborock_qrevo_pro_main_brush_time_left') |
+              int <= 21600 %}
+
+              yellow
+
+              {% else %}
+
+              green
+
+              {% endif %}
+            grid_options:
+              columns: 12
+              rows: 1
+            tap_action:
+              action: none
+            hold_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.roborock_qrevo_pro_reset_main_brush_consumable
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-template-card
+            primary: Clean Sensors
+            secondary: >-
+              {% set delta =
+              states('sensor.roborock_qrevo_pro_sensor_time_left') | int %}
+
+              {% set hours = (delta | float / 3600) | round(0) | int -%}
+
+              in {% if delta < 1 -%}
+                < 1 hr
+              {%- else -%}
+                {{ hours }} hrs
+              {%- endif %} of run time
+            icon: mdi:eye
+            entity: sensor.roborock_qrevo_pro_sensor_time_left
+            icon_color: >-
+              {% if states('sensor.roborock_qrevo_pro_sensor_time_left') | int
+              <= 0 %}
+
+              red
+
+              {% elif states('sensor.roborock_qrevo_pro_sensor_time_left') | int
+              <= 3600 %}
+
+              orange
+
+              {% elif states('sensor.roborock_qrevo_pro_sensor_time_left') | int
+              <= 7200 %}
+
+              yellow
+
+              {% else %}
+
+              green
+
+              {% endif %}
+            grid_options:
+              columns: 12
+              rows: 1
+            tap_action:
+              action: none
+            hold_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.roborock_qrevo_pro_reset_sensor_consumable
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-template-card
+            primary: Replace Side Brush
+            secondary: >-
+              {% set delta =
+              states('sensor.roborock_qrevo_pro_side_brush_time_left') | int %}
+
+              {% set hours = (delta | float / 3600) | round(0) | int -%}
+
+              in {% if delta < 1 -%}
+                < 1 hr
+              {%- else -%}
+                {{ hours }} hrs
+              {%- endif %} of run time
+            icon: mdi:ship-wheel
+            entity: sensor.roborock_qrevo_pro_side_brush_time_left
+            icon_color: >-
+              {% if states('sensor.roborock_qrevo_pro_side_brush_time_left') |
+              int <= 0 %}
+
+              red
+
+              {% elif states('sensor.roborock_qrevo_pro_side_brush_time_left') |
+              int <= 3600 %}
+
+              orange
+
+              {% elif states('sensor.roborock_qrevo_pro_side_brush_time_left') |
+              int <= 21600 %}
+
+              yellow
+
+              {% else %}
+
+              green
+
+              {% endif %}
+            grid_options:
+              columns: 12
+              rows: 1
+            tap_action:
+              action: none
+            hold_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.roborock_qrevo_pro_reset_side_brush_consumable
+            double_tap_action:
+              action: none
+        column_span: 4
+      - type: grid
+        cards:
+          - type: heading
+            heading: Config
+            heading_style: subtitle
+          - type: custom:mushroom-number-card
+            entity: number.roborock_qrevo_pro_volume
+            name: Volume
+            icon: mdi:volume-high
+            grid_options:
+              columns: 6
+              rows: 2
+          - type: custom:mushroom-template-card
+            primary: Do Not Disturb
+            secondary: ''
+            icon: |-
+              {% if is_state('switch.roborock_qrevo_pro_do_not_disturb','on') %}
+              mdi:toggle-switch-outline
+              {% else %}
+              mdi:toggle-switch-off-outline
+              {% endif %}
+            entity: switch.roborock_qrevo_pro_do_not_disturb
+            icon_color: |-
+              {% if is_state('switch.roborock_qrevo_pro_do_not_disturb','on') %}
+              green
+              {% else %}
+              grey
+              {% endif %}
+            layout: vertical
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-entity-card
+            entity: time.roborock_qrevo_pro_do_not_disturb_begin
+            name: Do Not Disturb Begin
+            layout: vertical
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-entity-card
+            entity: time.roborock_qrevo_pro_do_not_disturb_end
+            name: Do Not Disturb End
+            layout: vertical
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_mop_mode
+            primary_info: name
+            name: Mop Mode
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_mop_intensity
+            name: Mop Intesity
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-select-card
+            entity: input_select.vacuum_fan_speed
+            name: Fan Speed
+            secondary_info: none
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+        column_span: 4
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: ''
+            subtitle: Stats
+            grid_options:
+              columns: 48
+              rows: auto
+          - type: custom:mushroom-template-card
+            primary: >-
+              {% set sqft =
+              states('sensor.roborock_qrevo_pro_total_cleaning_area') | float *
+              10.76 %}
+
+              {{ sqft | round(0)}} ft²
+            secondary: Total Area Cleaned
+            icon: mdi:texture-box
+            entity: sensor.roborock_qrevo_pro_total_cleaning_area
+            icon_color: grey
+            hold_action:
+              action: none
+            double_tap_action:
+              action: none
+          - type: custom:mushroom-template-card
+            primary: >-
+              {% set value =
+              states('sensor.roborock_qrevo_pro_total_cleaning_time') | int %}
+
+              {% set days = (value / 86400) | int -%}
+
+              {% set hours = ((value % 86400) / 3600) | int -%}
+
+              {% set minutes = ((value % 3600) / 60) | int -%}
+
+              {% set seconds = (value - (minutes * 60) - (hours * 3600) - (days
+              * 86400)) | int -%}
+
+              {% if value < 60 -%}
+                < 1 min
+              {%- else -%}
+                {%- if days > 0 -%}
+                  {%- if days == 1 -%}
+                    1 day
+                  {%- else -%}
+                    {{ days }} days
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if hours > 0 -%}
+                  {%- if days > 0 -%}
+                    {{ ', ' }}
+                  {%- endif -%}
+                  {%- if hours == 1 -%}
+                    1 hr
+                  {%- else -%}
+                    {{ hours }} hrs
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if minutes > 0 -%}
+                  {%- if days > 0 or hours > 0 -%}
+                    {{ ', ' }}
+                  {%- endif -%}
+                  {%- if minutes == 1 -%}
+                    1 min
+                  {%- else -%}
+                    {{ minutes }} mins
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if seconds > 0 -%}
+                  {%- if days > 0 or hours > 0 or minutes > 0 -%}
+                    {{ ', ' }}
+                  {%- endif -%}
+                  {%- if seconds == 1 -%}
+                    1 sec
+                  {%- else -%}
+                    {{ seconds }} secs
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endif %}
+            secondary: Total Clean Time
+            icon: mdi:clock-outline
+            icon_color: grey
+            grid_options:
+              columns: 9
+              rows: 1
+        column_span: 4
+      - type: grid
+        cards: []
+        column_span: 4
+    cards: []
