@@ -1,0 +1,54 @@
+- id: '1735332038534'
+  alias: Vacuum Run Check
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.vacuum_run_check
+  conditions: []
+  actions:
+  - action: timer.start
+    metadata: {}
+    data: {}
+    target:
+      entity_id: timer.vacuum_run_check
+  - alias: Script 'Vacuum Set Variables' on First Floor Vaccum
+    action: script.vacuum_set_variables_for_today
+    metadata: {}
+    data:
+      vacuum_entity: <<vacuum entity id>>
+      manual_mode: 'false'
+  - action: script.vacuum_run_announce
+    metadata: {}
+    data:
+      vacuum_entity: <<vacuum entity id>>
+    alias: Script 'Vacuum Run Announce' on First Floor Vaccum
+  - action: script.vacuum_run_check_2
+    metadata: {}
+    data:
+      vacuum_entity: <<vacuum entity id>>
+    alias: Script 'Vacuum Run Check' on First Floor Vacuum
+  mode: single
+- id: '1761137958837'
+  alias: Vacuum Problem Announce
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - <<vacuum error sensor>>
+    from: none
+  - trigger: state
+    entity_id:
+    - <<vacuum dock error sensor>>
+    from: ok
+  conditions:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
+  actions:
+  - action: script.vacuum_problem_announce
+    metadata: {}
+    data:
+      vacuum_entity: '{{ trigger.entity_id }}'
+  mode: single

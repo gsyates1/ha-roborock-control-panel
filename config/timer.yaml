@@ -1,0 +1,4 @@
+vacuum_run_check:
+  name: Vacuum Run Check
+  duration: "00:01:00"
+  icon: mdi:timer-outline

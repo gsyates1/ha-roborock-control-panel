@@ -1,0 +1,64 @@
+vacuum_0_announce_offset:
+  name: Vacuum 0-Announce Offset
+  initial: 15
+  min: 10
+  max: 90
+  step: 1
+  mode: slider
+  icon: mdi:clock-outline
+vacuum_1_sunday_announce_offset:
+  name: Vacuum 1-Sunday Announce Offset
+  initial: 15
+  min: 10
+  max: 90
+  step: 1
+  mode: slider
+  icon: mdi:clock-outline
+vacuum_2_monday_announce_offset:
+  name: Vacuum 2-Monday Announce Offset
+  initial: 15
+  min: 10
+  max: 90
+  step: 1
+  mode: slider
+  icon: mdi:clock-outline
+vacuum_3_tuesday_announce_offset:
+  name: Vacuum 3-Tuesday Announce Offset
+  initial: 15
+  min: 10
+  max: 90
+  step: 1
+  mode: slider
+  icon: mdi:clock-outline
+vacuum_4_wednesday_announce_offset:
+  name: Vacuum 4-Wednesday Announce Offset
+  initial: 15
+  min: 10
+  max: 90
+  step: 1
+  mode: slider
+  icon: mdi:clock-outline
+vacuum_5_thursday_announce_offset:
+  name: Vacuum 5-Thursday Announce Offset
+  initial: 15
+  min: 10
+  max: 90
+  step: 1
+  mode: slider
+  icon: mdi:clock-outline
+vacuum_6_Friday_announce_offset:
+  name: Vacuum 6-Friday Announce Offset
+  initial: 15
+  min: 10
+  max: 90
+  step: 1
+  mode: slider
+  icon: mdi:clock-outline
+vacuum_7_saturday_announce_offset:
+  name: Vacuum 7-Saturday Announce Offset
+  initial: 15
+  min: 10
+  max: 90
+  step: 1
+  mode: slider
+  icon: mdi:clock-outline

@@ -1,0 +1,96 @@
+vacuum_0_clean_mode:
+  name: Vacuum 0-Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode
+vacuum_0_fan_speed:
+  name: Vacuum 0-Fan Speed
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:fan
+vacuum_0_mop_intensity:
+  name: Vacuum 0-Mop Intensity
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:arrow-collapse-down
+vacuum_0_mop_mode:
+  name: Vacuum 0-Mop Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:map-marker-path
+vacuum_0_roborock_room_number:
+  name: Vacuum 0-Roborock Room Number
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:numeric
+vacuum_0_room:
+  name: Vacuum 0-Room
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:home-outline
+vacuum_0_room_number:
+  name: Vacuum 0-Room Number
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:numeric
+vacuum_0_vacuum_number:
+  name: Vacuum 0-Vacuum Number
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:numeric
+vacuum_1_sunday_clean_mode:
+  name: Vacuum 1 Sunday Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode
+vacuum_2_monday_clean_mode:
+  name: Vacuum 2 Monday Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode
+vacuum_3_tuesday_clean_mode:
+  name: Vacuum 3 Tuesday Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode
+vacuum_4_wednesday_clean_mode:
+  name: Vacuum 4 Wednesday Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode
+vacuum_5_thursday_clean_mode:
+  name: Vacuum 5 Thursday Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode
+vacuum_6_friday_clean_mode:
+  name: Vacuum 6 Friday Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode
+vacuum_7_Saturday_clean_mode:
+  name: Vacuum 7 Saturday Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode
+vacuum_manual_clean_room_clean_mode:
+  name: Vacuum Manual Clean Room Clean Mode
+  min: 0
+  max: 100
+  mode: text
+  icon: mdi:auto-mode

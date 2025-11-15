@@ -1,0 +1,544 @@
+vacuum_run_check_2:
+  alias: Vacuum Run Check
+  sequence:
+  - alias: If someone is home, the vacuum has not run today, vacuuming is enabled
+      for this day, the current time is within the run time, and the room to clean
+      is set, then run the vacuum
+    if:
+    - condition: state
+      entity_id: input_boolean.some_one_home
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.vacuum_0_ran_today
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.vacuum_0_day_enabled
+      state: 'on'
+    - alias: If current time is within the start window
+      condition: template
+      value_template: '{%- set today = now().strftime(''%Y-%m-%d'') -%}
+
+        {%- set start = (today + '' '' + states(''input_datetime.vacuum_0_time''))
+        | as_timestamp -%}
+
+        {%- set end = (today + '' '' + states(''input_datetime.vacuum_0_time'')) |
+        as_timestamp + 3600 -%}
+
+        {%- set now = now() | as_timestamp %}
+
+        {% if now >= start and now <= end -%}
+
+        true
+
+        {%- else -%}
+
+        false
+
+        {%- endif %}  '
+    - alias: If room to clean on this day is not 'none'
+      condition: not
+      conditions:
+      - condition: state
+        entity_id: input_text.vacuum_0_room
+        state: None
+    then:
+    - action: script.vacuum_clean_room
+      metadata: {}
+      data:
+        vacuum_entity: '{{ vacuum_entity }}'
+    - action: input_boolean.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum{{ states('input_text.vacuum_0_vacuum_number')
+          }}_ran_today
+      alias: Set that the vacuum has run today
+  description: ''
+  fields:
+    vacuum_entity:
+      selector:
+        entity: {}
+      name: Vacuum Entity
+      required: true
+vacuum_run_announce:
+  alias: Vacuum Run Announce
+  sequence:
+  - alias: If someone is home, the vacuum announcement has not happened today, vacuuming
+      is enabled for this day, the current time is within the announcement time, and
+      the room to clean is set, then announce; expects Vacuum Set Variables to have
+      already been called
+    if:
+    - condition: state
+      entity_id: input_boolean.some_one_home
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.vacuum_0_announced_today
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.vacuum_0_day_enabled
+      state: 'on'
+    - alias: If current time is within the announce window
+      condition: template
+      value_template: '{%- set today = now().strftime(''%Y-%m-%d'') -%}
+
+        {%- set start = (today + '' '' + states(''input_datetime.vacuum_0_time''))
+        | as_timestamp - (states(''input_number.vacuum_0_announce_offset'') | int
+        * 60) -%}
+
+        {%- set end = (today + '' '' + states(''input_datetime.vacuum_0_time'')) |
+        as_timestamp - 1 -%}
+
+        {%- set now = now() | as_timestamp %}
+
+        {% if now >= start and now <= end -%}
+
+        true
+
+        {%- else -%}
+
+        false
+
+        {%- endif %}  '
+    - alias: If room to clean on this day is not 'none'
+      condition: not
+      conditions:
+      - condition: state
+        entity_id: input_text.vacuum_0_room
+        state: None
+    then:
+    - action: script.tts
+      metadata: {}
+      data:
+        message: "Please check the floor in the {{ states('input_text.vacuum_0_room')
+          -}}\n  {# 1 - Dining Room -#}     {{ ', open the dining room gate, and pick
+          up the dog pad' if states('input_text.vacuum_0_room_number') == '1' else
+          '' -}}\n  {# 2 - Entry & Library -#} {{ ', open the dining room gate, and
+          pick up the dog pad' if states('input_text.vacuum_0_room_number') == '2'
+          else '' -}}\n  {# 3 - Great Room -#}      {{ ', and close the bedroom gate'
+          \ if states('input_text.vacuum_0_room_number') == '3' else '' -}}\n  {#
+          4 - Kitchen -#}         {{ ', and pick up the dog pad' if states('input_text.vacuum_0_room_number')
+          == '4' else '' -}}\n  {# 5 - Laundry -#}         {{ ''  if states('input_text.vacuum_0_room_number')
+          == '5' else '' -}}\n  {# 6 - Master Bedroom -#}  {{ ', open the great room
+          gate, close the dog crate, and pick up the bath mats' if states('input_text.vacuum_0_room_number')
+          == '6' else '' -}}\n  {# 7 - Nook & Bar Area -#} {{ ', and open the powder
+          room door.' if states('input_text.vacuum_0_room_number') == '7' else ''
+          -}}\n  {# 8 - Craft Room -#}      {{ ''  if states('input_text.vacuum_0_room_number')
+          == '8' else '' -}}\n  {# 9 - Bridge & Hall -#}   {{ ''  if states('input_text.vacuum_0_room_number')
+          == '9' else '' -}}\n  {# 10 - Guest Room -#}     {{ ', close the hall bathroom
+          door, and open the guest bathroom door.' if states('input_text.vacuum_0_room_number')
+          == '10' else '' -}}\n  {# 11 - Computer Room -#}  {{ ', and position the
+          chairs'  if states('input_text.vacuum_0_room_number') == '11' else '' -}}\n
+          \ {# 12 - Bonus Room -#}     {{ ''  if states('input_text.vacuum_0_room_number')
+          == '12' else '' -}}\n  . Vacuum will start in about {{ states('input_number.vacuum_0_announce_offset')
+          | int }} minutes."
+    - action: input_boolean.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum{{ states('input_text.vacuum_0_vacuum_number')
+          }}_announced_today
+      alias: Set that vacuum was announced today
+  description: ''
+  fields:
+    vacuum_entity:
+      selector:
+        entity: {}
+      name: Vacuum Entity
+      required: true
+vacuum_cycle_clean_mode:
+  alias: Vacuum Cycle Clean Mode
+  sequence:
+  - alias: Based on currently set action, choose the next action to set
+    choose:
+    - conditions:
+      - alias: Vac + Mop is set
+        condition: template
+        value_template: '{{ states(clean_mode_entity) == ''Vac + Mop'' }}'
+      sequence:
+      - action: input_text.set_value
+        metadata: {}
+        data:
+          value: Vac
+        target:
+          entity_id: '{{ clean_mode_entity }}'
+        alias: Change to Vac
+    - conditions:
+      - condition: template
+        value_template: '{{ states(clean_mode_entity) == ''Vac'' }}'
+        alias: Vac is set
+      sequence:
+      - action: input_text.set_value
+        metadata: {}
+        data:
+          value: Mop
+        target:
+          entity_id: '{{ clean_mode_entity }}'
+        alias: Change to Mop
+    - conditions:
+      - condition: template
+        value_template: '{{ states(clean_mode_entity) == ''Mop'' }}'
+        alias: Mop is set
+      sequence:
+      - action: input_text.set_value
+        metadata: {}
+        data:
+          value: Vac + Mop
+        target:
+          entity_id: '{{ clean_mode_entity }}'
+        alias: Change to Vac + Mop
+  fields:
+    clean_mode_entity:
+      selector:
+        entity: {}
+      name: Clean Mode_Entity
+  description: ''
+vacuum_set_clean_mode:
+  alias: Vacuum Set Clean Mode
+  sequence:
+  - variables:
+      vacuum_suffix: '{% if state_attr(vacuum_entity,''friendly_name'') == ''Roborock
+        Qrevo Pro 2'' -%} 2 {% else -%} {% endif %}
+
+        '
+  - alias: Choose between vac, mop, and vac & mop
+    choose:
+    - conditions:
+      - alias: If vac & mop
+        condition: template
+        value_template: '{{ states(''input_text.vacuum_0_clean_mode'') == ''Vac +
+          Mop'' }}'
+      sequence:
+      - action: vacuum.set_fan_speed
+        metadata: {}
+        data:
+          fan_speed: '{{ states(''input_text.vacuum_0_fan_speed'') | lower }}'
+        target:
+          entity_id: '{{ vacuum_entity }}'
+        alias: Set the fan speed on the vacuum
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: '{{ states(''input_text.vacuum_0_mop_intensity'') | lower }}'
+        target:
+          entity_id: select.roborock_qrevo_pro{{'_' if vacuum_suffix}}{{vacuum_suffix}}_mop_intensity
+        alias: Set the mop intensity on the vacuum
+    - conditions:
+      - alias: If vac
+        condition: template
+        value_template: '{{ states(''input_text.vacuum_0_clean_mode'') == ''Vac''
+          }}'
+      sequence:
+      - action: vacuum.set_fan_speed
+        metadata: {}
+        data:
+          fan_speed: '{{ states(''input_text.vacuum_0_fan_speed'') | lower }}'
+        target:
+          entity_id: '{{ vacuum_entity }}'
+        alias: Set the fan speed on the vacuum
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: 'off'
+        target:
+          entity_id: select.roborock_qrevo_pro{{'_' if vacuum_suffix}}{{vacuum_suffix}}_mop_intensity
+        alias: Set the mop intensity on the vacuum
+    - conditions:
+      - alias: if mop
+        condition: template
+        value_template: '{{ states(''input_text.vacuum_0_clean_mode'') == ''Mop''
+          }}'
+      sequence:
+      - action: vacuum.set_fan_speed
+        metadata: {}
+        data:
+          fan_speed: 'off'
+        target:
+          entity_id: '{{ vacuum_entity }}'
+        alias: Set the fan speed on the vacuum
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: '{{ states(''input_text.vacuum_0_mop_intensity'') | lower }}'
+        target:
+          entity_id: select.roborock_qrevo_pro{{'_' if vacuum_suffix}}{{vacuum_suffix}}_mop_intensity
+        alias: Set the mop intensity on the vacuum
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+  - alias: Set Mop Mode (deep plus needs special handling because the name in the
+      drop down does not match the name that needs to be sent to vacuum)
+    if:
+    - alias: If Deep + mode
+      condition: template
+      value_template: '{{ states(mop_mode_entity) == ''Deep +'' }}'
+    then:
+    - action: select.select_option
+      metadata: {}
+      data:
+        option: deep_plus
+      target:
+        entity_id: select.roborock_qrevo_pro{{'_' if vacuum_suffix}}{{vacuum_suffix}}_mop_mode
+    else:
+    - action: select.select_option
+      metadata: {}
+      data:
+        option: '{{ states(''input_text.vacuum_0_mop_mode'') | lower }}'
+      target:
+        entity_id: select.roborock_qrevo_pro{{'_' if vacuum_suffix}}{{vacuum_suffix}}_mop_mode
+  fields:
+    vacuum_entity:
+      selector:
+        entity: {}
+      name: Vacuum Entity
+      required: true
+  description: ''
+vacuum_clean_room:
+  alias: Vacuum Clean Room
+  sequence:
+  - action: script.vacuum_set_clean_mode
+    metadata: {}
+    data:
+      vacuum_entity: '{{ vacuum_entity }}'
+  - action: vacuum.send_command
+    target:
+      entity_id: '{{ vacuum_entity }}'
+    data:
+      command: app_segment_clean
+      params:
+      - segments:
+        - '{{ states(''input_text.vacuum_0_roborock_room_number'') }}'
+        repeat: 1
+  description: ''
+  fields:
+    vacuum_entity:
+      selector:
+        entity: {}
+      description: vacuum
+      required: true
+      name: vacuum_entity
+vacuum_set_variables_for_today:
+  sequence:
+  - variables:
+      week_day: '{% set temp = now().isoweekday() + 1 -%} {% if temp > 7 -%} {% set
+        temp = 1 -%} {% endif -%} {{ temp | string + ''_'' +states(''sensor.day_of_week'')
+        | lower }}'
+      vacuum_suffix: '{% if state_attr(vacuum_entity,''friendly_name'') == ''Roborock
+        Qrevo Pro 2''-%} 2 {% else -%} {% endif %}'
+      vacuum_suffix2: '{% if state_attr(vacuum_entity,''friendly_name'') == ''Roborock
+        Qrevo Pro 2''-%} _2 {% else -%} {% endif %}'
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: "{% if manual_mode == 'true' %}\n  {{ states('input_text.vacuum' + vacuum_suffix
+        +'_manual_clean_room_clean_mode') }}\n{% else %}\n  {{ states('input_text.vacuum'
+        + vacuum_suffix | string + '_' + week_day +\n  '_clean_mode') }}\n{% endif
+        %}"
+    target:
+      entity_id: input_text.vacuum_0_clean_mode
+    enabled: true
+    alias: Set clean mode 0 variable
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: "{% if manual_mode == 'true' %}\n  {{ states('input_select.vacuum' +
+        vacuum_suffix +'_manual_clean_room') }}\n{% else %}\n  {{ states('input_select.vacuum'
+        + vacuum_suffix | string + '_' + week_day +\n  '_room') }}\n{% endif %}"
+    target:
+      entity_id: input_text.vacuum_0_room
+    enabled: true
+    alias: Set room 0 variable
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{ state_attr(''sensor.variables'', ''variables'')[''vacuum_room_number_map''][states(''input_text.vacuum_0_room'')]
+        }}'
+    target:
+      entity_id: input_text.vacuum_0_room_number
+    enabled: true
+    alias: Set room number 0 variable
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{ state_attr(''sensor.variables'', ''variables'')[''vacuum_roborock_room_number_map''][states(''input_text.vacuum_0_room'')]
+        }}'
+    target:
+      entity_id: input_text.vacuum_0_roborock_room_number
+    enabled: true
+    alias: Set roborock room number 0 variable
+  - alias: Set Day Enabled 0 variable
+    if:
+    - condition: template
+      value_template: '{{ is_state(''input_boolean.vacuum'' + vacuum_suffix | string
+        + ''_'' + week_day + ''_enabled'', ''on'') or manual_mode == ''true'' }}'
+    then:
+    - action: input_boolean.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum_0_day_enabled
+    else:
+    - action: input_boolean.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum_0_day_enabled
+  - action: input_datetime.set_datetime
+    metadata: {}
+    data:
+      datetime: "{% if manual_mode == 'true' %}\n  {{ now() }}\n{% else %}\n  {{ ('2024-01-01
+        ' + states('input_datetime.vacuum' + vacuum_suffix | string\n  + '_' + week_day
+        + '_time')) | as_timestamp | timestamp_local | as_datetime\n  }}\n{% endif
+        %}"
+    target:
+      entity_id: input_datetime.vacuum_0_time
+    enabled: true
+    alias: Set run time 0 variable
+  - alias: Set announced today 0 variable
+    if:
+    - condition: template
+      value_template: '{{ is_state(''input_boolean.vacuum'' + vacuum_suffix | string
+        +''_announced_today'',''on'') and manual_mode == ''false''}}'
+    then:
+    - action: input_boolean.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum_0_announced_today
+    else:
+    - action: input_boolean.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum_0_announced_today
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{ vacuum_suffix }}'
+    target:
+      entity_id: input_text.vacuum_0_vacuum_number
+  - alias: Set ran today 0 variable
+    if:
+    - condition: template
+      value_template: '{{ is_state(''input_boolean.vacuum'' + vacuum_suffix | string
+        +''_ran_today'',''on'') and manual_mode == ''false'' }}'
+    then:
+    - action: input_boolean.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum_0_ran_today
+    else:
+    - action: input_boolean.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum_0_ran_today
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{ states(''input_select.vacuum'' + vacuum_suffix | string + ''_fan_speed'')
+        }}'
+    target:
+      entity_id: input_text.vacuum_0_fan_speed
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{ states(''input_select.vacuum'' + vacuum_suffix | string + ''_mop_intensity'')
+        }}'
+    target:
+      entity_id: input_text.vacuum_0_mop_intensity
+  - action: input_text.set_value
+    metadata: {}
+    data:
+      value: '{{ states(''input_select.vacuum'' + vacuum_suffix | string + ''_mop_mode'')
+        }}'
+    target:
+      entity_id: input_text.vacuum_0_mop_mode
+  - action: input_number.set_value
+    metadata: {}
+    data:
+      value: "{% if manual_mode == 'true' %}\n  15\n{% else %}\n  {{ states('input_number.vacuum'
+        + vacuum_suffix | string + '_' + week_day +\n  '_announce_offset') | int }}\n{%
+        endif %}"
+    target:
+      entity_id: input_number.vacuum_0_announce_offset
+  alias: Vacuum Set Variables
+  description: ''
+  fields:
+    vacuum_entity:
+      selector:
+        entity: {}
+      name: Vacuum Entity
+      required: true
+    manual_mode:
+      selector:
+        text:
+      name: Manual Mode
+      required: true
+vacuum_clean_room_manual:
+  sequence:
+  - action: timer.pause
+    metadata: {}
+    data: {}
+    target:
+      entity_id: timer.vacuum_run_check
+    alias: Pause the Vacuum Run Check timer so it does not try to change variables
+      at the same time as this script
+  - alias: Script 'Vacuum Set Variables' for manual mode
+    action: script.vacuum_set_variables_for_today
+    metadata: {}
+    data:
+      manual_mode: 'true'
+      vacuum_entity: '{{ vacuum_entity }}'
+  - action: script.vacuum_clean_room
+    metadata: {}
+    data:
+      vacuum_entity: '{{ vacuum_entity }}'
+  - action: timer.start
+    metadata: {}
+    data: {}
+    target:
+      entity_id: timer.vacuum_run_check
+    alias: Restart the Vacuum Run Check timer
+  fields:
+    vacuum_entity:
+      selector:
+        entity: {}
+      name: Vacuum Entity
+      required: true
+  alias: Vacuum Clean Room Manual
+  description: ''
+vacuum_problem_announce:
+  sequence:
+  - variables:
+      vacuum_name: "{% if state_attr(vacuum_entity, 'friendly_name') in ['Roborock
+        Qrevo Pro Dock Error', 'Roborock Qrevo Pro Vacuum error'] %}\n  downstairs
+        vacuum\n{% elif state_attr(vacuum_entity, 'friendly_name') in ['Roborock Qrevo
+        Pro 2 Dock Error', 'Roborock Qrevo Pro 2 Vacuum error'] %}\n  upstairs vacuum\n{%
+        else %}\n  unknown vacuum\n{% endif %}"
+  - action: script.add_reminder
+    metadata: {}
+    data:
+      reminder: '{{ vacuum_name }} has a problem: {{ states(vacuum_entity) | replace("_",
+        " ") }}'
+  fields:
+    vacuum_entity:
+      selector:
+        entity: {}
+      name: Vacuum Entity
+      required: true
+  alias: Vacuum Problem Announce
+  description: ''

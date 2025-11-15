@@ -1,0 +1,130 @@
+vacuum_1_sunday_room:
+  name: Vacuum 1-Sunday Room
+  options:
+    - Dining Room
+    - Entry & Library
+    - Great Room
+    - Kitchen
+    - Laundry Room
+    - Master Bedroom & Bath
+    - Nook & Bar Area
+    - None
+  initial: None
+  icon: mdi:home-outline
+vacuum_2_monday_room_test:
+  name: Vacuum 2-Monday Room Test
+  options:
+    - Dining Room
+    - Entry & Library
+    - Great Room
+    - Kitchen
+    - Laundry Room
+    - Master Bedroom & Bath
+    - Nook & Bar Area
+    - None
+  initial: None
+  icon: mdi:home-outline
+vacuum_3_tuesday_room_test:
+  name: Vacuum 3-Tuesday Room Test
+  options:
+    - Dining Room
+    - Entry & Library
+    - Great Room
+    - Kitchen
+    - Laundry Room
+    - Master Bedroom & Bath
+    - Nook & Bar Area
+    - None
+  initial: None
+  icon: mdi:home-outline
+vacuum_4_wednesday_room_test:
+  name: Vacuum 4-Wednesday Room Test
+  options:
+    - Dining Room
+    - Entry & Library
+    - Great Room
+    - Kitchen
+    - Laundry Room
+    - Master Bedroom & Bath
+    - Nook & Bar Area
+    - None
+  initial: None
+  icon: mdi:home-outline
+vacuum_5_thursday_room_test:
+  name: Vacuum 5-Thursday Room Test
+  options:
+    - Dining Room
+    - Entry & Library
+    - Great Room
+    - Kitchen
+    - Laundry Room
+    - Master Bedroom & Bath
+    - Nook & Bar Area
+    - None
+  initial: None
+  icon: mdi:home-outline
+vacuum_6_friday_room_test:
+  name: Vacuum 6-Friday Room Test
+  options:
+    - Dining Room
+    - Entry & Library
+    - Great Room
+    - Kitchen
+    - Laundry Room
+    - Master Bedroom & Bath
+    - Nook & Bar Area
+    - None
+  initial: None
+  icon: mdi:home-outline
+vacuum_7_Saturday_room_test:
+  name: Vacuum 7-Saturday Room Test
+  options:
+    - Dining Room
+    - Entry & Library
+    - Great Room
+    - Kitchen
+    - Laundry Room
+    - Master Bedroom & Bath
+    - Nook & Bar Area
+    - None
+  initial: None
+  icon: mdi:home-outline
+vacuum_manual_clean_room:
+  name: Vacuum Manual Clean Room
+  options:
+    - Dining Room
+    - Entry & Library
+    - Great Room
+    - Kitchen
+    - Laundry Room
+    - Master Bedroom & Bath
+    - Nook & Bar Area
+    - None
+  initial: None
+  icon: mdi:home-outline
+vacuum_fan_speed:
+  name: Vacuum Fan Speed
+  options:
+    - Quiet
+    - Balanced
+    - Turbo
+    - Max
+  initial: Balanced
+  icon: mdi:fan
+vacuum_mop_intensity:
+  name: Vacuum Mop Intensity
+  options:
+    - Low
+    - Medium
+    - High
+  initial: Low
+  icon: mdi:arrow-collapse-down
+vacuum_mop_mode:
+  name: Vacuum Mop Mode
+  options:
+    - Standard
+    - Deep
+    - Deep +
+    - Fast
+  initial: Standard
+  icon: mdi:map-marker-path

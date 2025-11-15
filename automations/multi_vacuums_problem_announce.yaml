@@ -1,0 +1,8 @@
+  - trigger: state
+    entity_id:
+    - sensor.roborock_qrevo_pro_2_vacuum_error
+    from: none
+  - trigger: state
+    entity_id:
+    - sensor.roborock_qrevo_pro_2_dock_error
+    from: ok
