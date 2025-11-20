@@ -43,7 +43,7 @@ Instructions and YAML to build a Roborock Vacuum Control Panel in Home Assistant
 * Only one floor(map) is supported
 
 ### Support Vacuums
-This framework has only been tested with the following vacuums.  Other Roborock vacuums should work, but may need additional changes not spelled out in the intructions provided.
+This framework has only been tested with the following vacuums.  Other Roborock vacuums should work, but may need additional changes not spelled out in the intructions provided. If you use this with another vacuum model please let me know so I can update this list.
 
 ```
 Roborock QRevo Pro
@@ -53,15 +53,15 @@ Roborock QRevo Pro
 The installation is completely manual.  Follow these [instructions](instructions.md).
 
 ### How It Works
-This section gives an overview of how the vacuum control panel works.  It's not necessary to read this section to use and use it, but it can make is easier by helping you understand what all the parts are doing.
+This section gives an overview of how the vacuum control panel works.  It's not necessary to read this section to install and use it, but it can make it easier by helping you understand what all the parts are doing.
 
-The central part of the automation is a timer that fires every minute.  It triggers an automation called 'Vacuum Run Check'.  This automation firsts restarts the timer so it will trigger again the next minute.  It then executes three scripts:
+The central part of the automation is a timer that fires every minute.  It triggers an automation called 'Vacuum Run Check'.  This automation first restarts the timer so it will trigger again the next minute.  It then executes three scripts:
 ```
 Vacuum Set Variables
 Vacuum Run Announce
 Vacuum Run Check
 ```
-A repeating timer is used so that even if HA isn't running or some other issue prevents the vacuum from starting at the specified time, the vacuum functionality will run when HA is back or the issue is fixed.
+A repeating timer is used so that even if HA isn't running or some other issue prevents the vacuum from starting at the specified time, the vacuum functionality will run when HA is back or the issue is fixed (within a time limit.)
 
 ##### Vacuum Set Variables
 
@@ -84,7 +84,7 @@ This script is what actually starts the vacuum for the day if all conditions are
 - the current day of the week is enable in control panel
 - the current time is in the run window
 - the vacuum has not already run
-- someone is home
+- someone is home (You need to provide the logic for this.)
 - the day's room is not set to None.
 
 The run window starts at the time set in the control panel for the day to one hour after that time.
@@ -93,7 +93,7 @@ If the conditons are met, then this script executes the script 'Vacuum Clean Roo
 
 ##### Vacuum Clean Room
 
-This script simple calls the script 'Vacuum Set Clean Mode' and then starts the vacuum cleaning.  The vacuum is started by using the app_segment_clean command.
+This script calls the script 'Vacuum Set Clean Mode' and then starts the vacuum cleaning.  The vacuum is started by using the app_segment_clean command.
 
 ##### Vacuum Set Clean Mode
 
@@ -111,7 +111,7 @@ This automation watches the vacuum and dock error sensors and, if they are trigg
 
 ##### Vacuum Problem Announce (script)
 
-This script builds the problem message and announces it. 
+This script builds the problem message and announces it. (You need to provide the annoounce logic.)
 
 #### Other Support Scripts
 ##### Create Vacuum Room Number Map
@@ -120,9 +120,9 @@ This script creates the room-name-to-room-ID dictionaries.  See the instructions
 
 ##### Vacuum Clean Room Manual
 
-Called when the manual clean option is used.  It simple calls the 'Vacuum Clean Room' script passing a field telling it this is a manual clean.
+Called when the manual clean option is used.  It simply calls the 'Vacuum Clean Room' script passing a field telling it this is a manual clean.
 
 ##### Vacuum Cycle Clean Mode
 
-A helper script used by the cleaning-mode(Action) buttons on the control panel. It cycles the appliable helper between: Vac, Mop, and Vac + Mop.
+A helper script used by the cleaning-mode(Action) buttons on the control panel. It cycles the applicable helper between: Vac, Mop, and Vac + Mop.
 
