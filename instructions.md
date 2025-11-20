@@ -61,7 +61,7 @@ data:
       repeat: 1
 ``` 
 	3. Watch which room the vacuum goes to.  Hit the vacuum's return to dock button.
-	4. Repeat for each unknown room recording the IDs.
+	4. Repeat for each unknown room, recording the IDs.
 3. Create the room mapping script.
 	1. Create a new script in HA.
 	2. Copy the contents of the scripts/create_vacuum_room_number_map.yaml file from this repository into your script.
@@ -122,7 +122,7 @@ config/timer.yaml
 ### Scripts
 Add the vacuum scripts to your HA config and modify them for your setup.
 
-1. Copy the contents of the script/scripts.yaml file into your scripts.yaml file.  Alternatively create each script in the UI and paste in the applicable yaml from the above file. There are eight scripts.
+1. Copy the contents of the script/scripts.yaml file into your scripts.yaml file.  Alternatively create each script in the UI and paste in the applicable YAML from the above file. There are eight scripts.
 2. In the Developer Tools YAML tab, reload your YAML config.
 3. Verify the scripts now appear in HA under Ssttings >> Automations & Scenes >> Scripts.  If not, you may need to restart HA.
 4. Make the following changes to the scripts:
@@ -141,8 +141,8 @@ Add the vacuum automations to your HA config and modify them for your setup.
 4. Search and replace \<\<vacuum dock error sensor\>\> with the entity id of the dock's error sensor (e.g. sensor.sensor.roborock_qrevo_pro_dock_error).
 5. Copy the contents of the file you changed into your automations.yaml file.  Alternatively create each automation in the UI and paste in the applicable yaml from the above file. There are two automtions.
 6. In the Developer Tools YAML tab, reload your YAML config.
-7. Verify the automations now appear in HA under Ssttings >> Automations & Scenes >> Automations.  If not, you may need to restart HA.
-8. In the automation 'Vacuum Problem Announce' there is a condition that is checking that the input boolean 'Sleep Mode' is off.  If you don't want announcements in the middle of the night, you need to replace this with a condition using your functionality. Or, you can remove this condition.
+7. Verify the automations now appear in HA under Settings >> Automations & Scenes >> Automations.  If not, you may need to restart HA.
+8. In the automation 'Vacuum Problem Announce' there is a condition that is checking that the input boolean 'Sleep Mode' is off.  If you don't want announcements in the middle of the night, you need to replace this with a condition using your functionality. Otherwise, you can remove this condition.
 
 ### Add a Midnight Action
 The two input booleans 'Vacuum Ran Today' and 'Vacuum Announced Today' need to be reset at midnight so the vacuum functionality will work the next day.
@@ -161,14 +161,14 @@ target:
 ```
 
 ### Create the Dashboard
-These instructions assume the dashboard will be created as a subview and you will have a card on some existing dashboard use a navigate action to the vacuum control panel.  If you want something else, You will need to adjust these instructions and the YAML.
+These instructions assume the dashboard will be created as a subview and you will have a card on some existing dashboard that uses a navigate action to open the vacuum control panel.  If you want something else, You will need to adjust these instructions and the YAML.
 
 1. In Settings > Dashboards either pick an exiting dashboard or create a new dashboard to add the vacuum control panel to.
 2. Click the dashboard to open it.
 3. Click the pencil in the upper right to edit the dashboard.
 4. From the three-dots menu in the upper right, select 'Raw configuration editor'.
 5. Copy the contents of dashboards/vacuum.yaml and paste it at the bottom of the existing yaml.
-6. You now need to fix all the vacuum and sensor entity IDs in the YAML to reflect your vacuum and sensor entity IDs.  If your entities are using the default IDs which should have the format \<type\>.\<vacuum device name\>\_\<sensor name\> and \<type\>.\<vacuum device name\>\_dock\_\<sensor name\> then you may be able to do a single search and replace to fix all the entity IDs.  Search for 'roborock_qrevo_pro' and replace it with your vacuum's device name.  For example, if your vacuum device name is 'bob_the_robot' and your vacuum entity ID looks like vacuum.bob_the_robot and sensors like sensor.bob_the_robot_battery, search for 'roborock_qrevo_pro' and replacing it with 'bob_the_robot'.  If your entity IDs do not follow this pattern, you will need to go through the YAML line-by-line and fix the entity IDs.
+6. You now need to fix all the vacuum and sensor entity IDs in the YAML to reflect your entity IDs.  If your entities are using the default IDs which should have the format \<type\>.\<vacuum device name\>\_\<sensor name\> and \<type\>.\<vacuum device name\>\_dock\_\<sensor name\> then you may be able to do a single search and replace to fix all the entity IDs.  Search for 'roborock_qrevo_pro' and replace it with your vacuum's device name.  For example, if your vacuum device name is 'bob_the_robot' and your vacuum entity ID looks like vacuum.bob_the_robot and sensors like sensor.bob_the_robot_battery, search for 'roborock_qrevo_pro' and replacing it with 'bob_the_robot'.  If your entity IDs do not follow this pattern, you will need to go through the YAML line-by-line and fix the entity IDs.
 7. Close the YAML editor and you should see the dashboard in edit mode.  Check to see if all cards have values.
 8. Click 'Done' to return to normal mode.  Note that the problem cards, the vacuum control buttons (stop, pause, reume, return to dock), and progress card are in conditional cards so they will only show if the vacuum has a problem or is actively running, respectively.
 
@@ -182,7 +182,7 @@ You should also make sure this timer automatically runs when HA starts.  If you 
  
 ### Handling Multiple Vacuums
 
-The basic functionality is in the scripts to suport two vacuums.  (In theory more can be added, but it will take a bit more work that listed here.)
+The basic functionality is in the scripts to suport two vacuums.  (In theory more can be added, but it will take a bit more work that listed here. Just follow the same pattern.)
 
 **NOTE: Make sure your first vacuum control panel is working before adding the second vacuum because you will be copying the dashboard.**
 
@@ -213,8 +213,9 @@ Vacuum 0-Vacuum Number
 4.  In Settings > Dashboards open the exiting dashboard where your vacuum control panel subview is.
 5. Edit the dashboard.
 6. From the three-dots menu select 'Raw configuration editor'.
-7. Copy entire set of YAML for your existing vacuum control panel and paste it at the bottom of the existing yaml in they same file.
-8. You now need to fix all the vacuum and sensor entity IDs in the YAML to reflect second vacuum helpers.  You should be able to search and replace 'vacuum' to 'vacuum2' and 'Vacuum' to 'Vacuum2', ***but be careful not the change your original dashboard***.
-9. If your room dictionay does not already have the rooms for the second vacuum, you need to update it.  Modify the script 'Create Vacuum Room Number Map' to add the rooms and then run it.  If you need to get the room ids, refer back to the 'Create Room Dictionaries' section.
-10. In the script 'Vacuum Problem Announce', there is a 'Define variables vacuum_name' action.  For the first vacuum you modified the friendly name in the 'if' statement condition to be your vacuum's and dock's problem sensors, now you need to do the same for the names in the 'elif' part of the template.  Change the names to your second vacuum's and dock's error sensors.  Also change 'unknown vacuum' to be whatever you want the message to call your second vacuum.
+7. Copy entire set of YAML for your existing vacuum control panel and paste it at the bottom of the existing yaml or another dashboard YAML file.
+8. You now need to fix all the helper entity IDs in the YAML to reflect second vacuum helpers.  You should be able to search and replace 'vacuum' to 'vacuum2' and 'Vacuum' to 'Vacuum2', ***but be careful not the change your original dashboard if their in the same file***.
+9. You also need to fix the vacuum and sensor entity IDs the way you did for the first vacuum.  See step 6 in the 'Create the Dashboard' section above.
+10. If your room dictionay does not already have the rooms for the second vacuum, you need to update it.  Modify the script 'Create Vacuum Room Number Map' to add the rooms and then run it.  If you need to get the room ids, refer back to the 'Create Room Dictionaries' section.
+11. In the script 'Vacuum Problem Announce', there is a 'Define variables vacuum_name' action.  For the first vacuum you modified the friendly names in the 'if' statement condition to be your vacuum's and dock's problem sensors, now you need to do the same for the names in the 'elif' part of the template.  Change the names to your second vacuum's and dock's error sensors.  Also change 'unknown vacuum' to be whatever you want the message to call your second vacuum.
 
